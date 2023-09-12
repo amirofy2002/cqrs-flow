@@ -2,9 +2,9 @@ export class Logger {
   constructor(private readonly name: string) {}
 
   log(...args: any[]): void {
-    throw new Error("Method not implemented.");
+    console.log(args);
   }
   error(...args: any[]): void {
-    throw new Error("Method not implemented.");
+    console.error(args);
   }
 }
