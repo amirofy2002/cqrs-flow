@@ -1,5 +1,4 @@
-import { CommandHandler } from './CommandHandler'
-import { EventHandler } from './EventHandler'
-import { ReceiveEvents } from './saga'
+import { CommandHandler } from "./CommandHandler";
+import { EventHandler } from "./EventHandler";
 
-export { CommandHandler, EventHandler, ReceiveEvents }
+export { CommandHandler, EventHandler };
