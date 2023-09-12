@@ -1,3 +1,3 @@
 import { EventBus, CommandBus } from "./services";
-
-export { EventBus, CommandBus };
+import { CommandHandler, EventHandler } from "./services/decorators";
+export { EventBus, CommandBus, CommandHandler, EventHandler };
