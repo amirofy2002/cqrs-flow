@@ -1,2 +1,3 @@
-# cqrs-flow
-a simple package for managing cqrs events and commands
+# cqrs-toolkit
+
+a toolkit that eases managing cqrs events and commands
