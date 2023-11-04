@@ -17,8 +17,7 @@
     "cqrs",
     "commands",
     "events",
-    "toolkit",
-    ""
+    "toolkit"
   ],
   "author": "Amir Mehrabi Jorshari",
   "license": "MIT",
