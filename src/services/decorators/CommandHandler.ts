@@ -9,12 +9,12 @@ export function CommandHandler(command: ICommand) {
   >(constructor: T) {
     return class extends constructor {
       name = `${command}`.split(" ")[1];
-      logger = new Logger(this.name);
+      ___logger___ = new Logger(this.name);
       $mycommands = new CommandBus()
         .register(this.name, this)
         .pipe(
           tap((x) =>
-            this.logger.log({ name: x.name }, `${this.name}:EXECUTING`)
+            this.___logger___.log({ name: x.name }, `${this.name}:EXECUTING`)
           )
         )
         .subscribe({
@@ -22,16 +22,19 @@ export function CommandHandler(command: ICommand) {
             from(this.execute(xCommand.command)).subscribe({
               next: (x) => {
                 xCommand.onSuccess.next(x);
-                this.logger.log({ response: x }, `${this.name}:COMPLETED`);
+                this.___logger___.log(
+                  { response: x },
+                  `${this.name}:COMPLETED`
+                );
               },
 
               error: (err) => {
                 xCommand.onError.next(err);
-                this.logger.error({ err }, `${this.name}:ERROR`);
+                this.___logger___.error({ err }, `${this.name}:ERROR`);
               },
             });
           },
-          error: (err) => this.logger.error({ err }),
+          error: (err) => this.___logger___.error({ err }),
         });
     };
   };
