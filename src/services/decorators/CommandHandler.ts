@@ -18,10 +18,6 @@ export function CommandHandler(command: ICommand) {
             from(this.execute(xCommand.command)).subscribe({
               next: (x) => {
                 xCommand.onSuccess.next(x);
-                this.___logger___.log(
-                  { response: x },
-                  `${this.name}:COMPLETED`
-                );
               },
 
               error: (err) => {
