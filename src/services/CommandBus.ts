@@ -35,7 +35,7 @@ export class CommandBus {
   static handlerMap: Record<string, ICommandHandler<ICommand>> = {};
 
   register(name: string, handler: ICommandHandler<ICommand>) {
-    this.logger.log({ name }, "regisering");
+    this.logger.log({ name }, "registering command");
     CommandBus.handlerMap[name] = handler;
     return CommandBus.$commands.pipe(filter((x) => x.name == name));
   }

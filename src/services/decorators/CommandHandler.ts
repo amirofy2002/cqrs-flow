@@ -12,11 +12,7 @@ export function CommandHandler(command: ICommand) {
       ___logger___ = new Logger(this.name);
       $mycommands = new CommandBus()
         .register(this.name, this)
-        .pipe(
-          tap((x) =>
-            this.___logger___.log({ name: x.name }, `${this.name}:EXECUTING`)
-          )
-        )
+        .pipe(tap((x) => {}))
         .subscribe({
           next: (xCommand) => {
             from(this.execute(xCommand.command)).subscribe({
