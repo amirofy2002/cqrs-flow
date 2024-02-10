@@ -8,7 +8,7 @@ export function CommandHandler(command: ICommand) {
     constructor: T
   ) {
     return class extends constructor {
-      name = `${command.constructor.name}`;
+      name = `${command}`.split(" ")[1];
       ___logger___ = new Logger(this.name);
       $myCommands = new CommandBus()
         .register(this.name, this)
