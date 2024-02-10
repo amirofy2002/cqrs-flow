@@ -30,7 +30,7 @@ export function CommandHandler(command: ICommand, options?: handleError) {
                     new ExecutionFailedEvent(
                       "command.failed",
                       err.message,
-                      xCommand
+                      xCommand.command
                     )
                   );
                 } else {
