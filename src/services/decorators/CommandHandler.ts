@@ -1,4 +1,4 @@
-import { catchError, from, tap } from "rxjs";
+import { catchError, from, of, tap, EMPTY } from "rxjs";
 import { Logger } from "../logger/logger";
 import { ICommand, ICommandHandler } from "../../core/types";
 import { CommandBus } from "../CommandBus";
@@ -22,7 +22,7 @@ export function CommandHandler(command: ICommand, options?: handleError) {
               .pipe(
                 catchError((err, caught) => {
                   xCommand.onError.next(err?.message ?? err);
-                  return options?.handleError ? from([]) : caught;
+                  return options?.handleError ? EMPTY : caught;
                 })
               )
               .subscribe({
