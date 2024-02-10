@@ -4,6 +4,6 @@ export class ExecutionFailedEvent implements IEvent {
   constructor(
     public readonly name: string,
     public readonly reason: string,
-    source: IEvent | ICommand
+    public readonly source: IEvent | ICommand
   ) {}
 }
