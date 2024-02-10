@@ -2,6 +2,8 @@ import { catchError, from, of, tap, EMPTY } from "rxjs";
 import { Logger } from "../logger/logger";
 import { ICommand, ICommandHandler } from "../../core/types";
 import { CommandBus } from "../CommandBus";
+import { EventBus } from "../EventBus";
+import { ExecutionFailedEvent } from "../../core/events/execution-failed.event";
 type handleError = {
   handleError?: boolean;
 };
@@ -18,21 +20,22 @@ export function CommandHandler(command: ICommand, options?: handleError) {
         .pipe(tap((x) => {}))
         .subscribe({
           next: (xCommand) => {
-            from(this.execute(xCommand.command))
-              .pipe(
-                catchError((err, caught) => {
-                  xCommand.onError.next(err?.message ?? err);
-                  return options?.handleError ? EMPTY : caught;
-                })
-              )
-              .subscribe({
-                next: (x) => {
-                  xCommand.onSuccess.next(x);
-                },
-                error: (err) => {
-                  xCommand.onError.next(err?.message ?? err);
-                  this.___logger___.error({ err }, `${this.name}:ERROR`);
-                },
+            this.execute(xCommand.command)
+              .then((res) => {
+                xCommand.onSuccess.next(res);
+              })
+              .catch((err) => {
+                if (options?.handleError) {
+                  new EventBus().publish(
+                    new ExecutionFailedEvent(
+                      "command.failed",
+                      err.message,
+                      xCommand
+                    )
+                  );
+                } else {
+                  xCommand.onError.next(err.message);
+                }
               });
           },
           error: (err) => this.___logger___.error({ err }),

@@ -19,12 +19,7 @@ export class CommandBus {
     const onSuccess = new Subject();
     const p = new Promise((resolve, reject) => {
       onSuccess.subscribe((x) => resolve(x));
-      onError.subscribe((x) => {
-        EventBus.subject.next(
-          new ExecutionFailedEvent("command.failed", x, command)
-        );
-        reject(x);
-      });
+      onError.subscribe((x) => reject(x));
     });
     // $executionContext.next(p)
     CommandBus.$commands.next({ name, command, onError, onSuccess });
