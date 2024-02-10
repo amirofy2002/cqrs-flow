@@ -1,6 +1,6 @@
 {
   "name": "cqrs-flow",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "a toolkit for managing cqrs events and commands",
   "main": "dist/index",
   "types": "dist/index",
