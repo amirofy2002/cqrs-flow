@@ -6,10 +6,7 @@ type handleError = {
   handleError?: boolean;
 };
 
-export function CommandHandler(
-  command: ICommand,
-  { handleError = true }: handleError
-) {
+export function CommandHandler(command: ICommand, options?: handleError) {
   return function <
     T extends { new (...args: any[]): ICommandHandler<ICommand> }
   >(constructor: T) {
@@ -25,7 +22,7 @@ export function CommandHandler(
               .pipe(
                 catchError((err, caught) => {
                   xCommand.onError.next(err?.message ?? err);
-                  return handleError ? from([]) : caught;
+                  return options?.handleError ? from([]) : caught;
                 })
               )
               .subscribe({
