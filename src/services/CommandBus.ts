@@ -1,8 +1,8 @@
 import { Subject, filter } from "rxjs";
 import { ICommand, ICommandHandler } from "../core/types";
 import { Logger } from "./logger/logger";
-
-const $executionContext = new Subject<Promise<any>>();
+import { EventBus } from "./EventBus";
+import { ExecutionFailedEvent } from "../core/events/execution-failed.event";
 
 export class CommandBus {
   logger = new Logger(CommandBus.name);
@@ -10,16 +10,21 @@ export class CommandBus {
     name: string;
     command: ICommand;
     onSuccess: Subject<any>;
-    onError: Subject<any>;
+    onError: Subject<string>;
   }>();
 
   async publish(command: ICommand) {
     const name = command.constructor.name;
-    const onError = new Subject();
+    const onError = new Subject<string>();
     const onSuccess = new Subject();
-    const p = new Promise(async (resolve, reject) => {
+    const p = new Promise((resolve, reject) => {
       onSuccess.subscribe((x) => resolve(x));
-      onError.subscribe((x) => reject(x));
+      onError.subscribe((x) => {
+        EventBus.subject.next(
+          new ExecutionFailedEvent("command.failed", x, command)
+        );
+        reject(x);
+      });
     });
     // $executionContext.next(p)
     CommandBus.$commands.next({ name, command, onError, onSuccess });
@@ -32,7 +37,7 @@ export class CommandBus {
     return CommandBus.handlerMap[name];
   }
 
-  static handlerMap: Record<string, ICommandHandler<ICommand>> = {};
+  static readonly handlerMap: Record<string, ICommandHandler<ICommand>> = {};
 
   register(name: string, handler: ICommandHandler<ICommand>) {
     this.logger.log({ name }, "registering command");
@@ -40,8 +45,3 @@ export class CommandBus {
     return CommandBus.$commands.pipe(filter((x) => x.name == name));
   }
 }
-
-$executionContext.subscribe({
-  next: (x) => x.catch((r) => new Error(r)),
-  error: console.error,
-});
