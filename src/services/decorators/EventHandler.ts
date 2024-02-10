@@ -2,7 +2,7 @@ import { IEvent, IEventHandler } from "../../core/types";
 import { EventBus } from "../EventBus";
 
 export function EventHandler(event: IEvent) {
-  return function <T extends new (...args: any[]) => IEventHandler<IEvent>>(
+  return function <T extends { new (...args: any[]): IEventHandler<IEvent> }>(
     constructor: T
   ) {
     return class extends constructor {

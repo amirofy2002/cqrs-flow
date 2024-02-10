@@ -4,9 +4,9 @@ import { ICommand, ICommandHandler } from "../../core/types";
 import { CommandBus } from "../CommandBus";
 
 export function CommandHandler(command: ICommand) {
-  return function <T extends new (...args: any[]) => ICommandHandler<ICommand>>(
-    constructor: T
-  ) {
+  return function <
+    T extends { new (...args: any[]): ICommandHandler<ICommand> }
+  >(constructor: T) {
     return class extends constructor {
       name = `${command}`.split(" ")[1];
       ___logger___ = new Logger(this.name);
