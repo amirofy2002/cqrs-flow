@@ -1,37 +1,44 @@
-import { from, tap } from "rxjs";
+import { catchError, from, of, tap, EMPTY } from "rxjs";
 import { Logger } from "../logger/logger";
 import { ICommand, ICommandHandler } from "../../core/types";
 import { CommandBus } from "../CommandBus";
+import { EventBus } from "../EventBus";
+import { ExecutionFailedEvent } from "../../core/events/execution-failed.event";
+type handleError = {
+  handleError?: boolean;
+};
 
-export function CommandHandler(command: ICommand) {
+export function CommandHandler(command: ICommand, options?: handleError) {
   return function <
     T extends { new (...args: any[]): ICommandHandler<ICommand> }
   >(constructor: T) {
     return class extends constructor {
       name = `${command}`.split(" ")[1];
-      logger = new Logger(this.name);
-      $mycommands = new CommandBus()
+      ___logger___ = new Logger(this.name);
+      $myCommands = new CommandBus()
         .register(this.name, this)
-        .pipe(
-          tap((x) =>
-            this.logger.log({ name: x.name }, `${this.name}:EXECUTING`)
-          )
-        )
+        .pipe(tap((x) => {}))
         .subscribe({
           next: (xCommand) => {
-            from(this.execute(xCommand.command)).subscribe({
-              next: (x) => {
-                xCommand.onSuccess.next(x);
-                this.logger.log({ response: x }, `${this.name}:COMPLETED`);
-              },
-
-              error: (err) => {
-                xCommand.onError.next(err);
-                this.logger.error({ err }, `${this.name}:ERROR`);
-              },
-            });
+            this.execute(xCommand.command)
+              .then((res) => {
+                xCommand.onSuccess.next(res);
+              })
+              .catch((err) => {
+                if (options?.handleError) {
+                  new EventBus().publish(
+                    new ExecutionFailedEvent(
+                      "command.failed",
+                      err.message,
+                      xCommand.command
+                    )
+                  );
+                } else {
+                  xCommand.onError.next(err.message);
+                }
+              });
           },
-          error: (err) => this.logger.error({ err }),
+          error: (err) => this.___logger___.error({ err }),
         });
     };
   };

@@ -8,7 +8,7 @@ export function EventHandler(event: IEvent) {
     return class extends constructor {
       _eventBus = new EventBus();
       _subscription = this._eventBus.$subject.subscribe((cmd) => {
-        if (cmd?.constructor?.name == `${event}`.split(" ")?.[1])
+        if (cmd?.constructor?.name == `${event}`.split(" ")[1])
           this.handle(cmd);
       });
     };

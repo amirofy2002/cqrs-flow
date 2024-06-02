@@ -1,1 +1,5 @@
-export class InvocationException extends Error {}
+export class InvocationException extends Error {
+  constructor(public reason: string) {
+    super(reason);
+  }
+}

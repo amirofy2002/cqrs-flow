@@ -1,7 +1,7 @@
 {
   "name": "cqrs-flow",
-  "version": "1.0.0",
-  "description": "a simple package for managing cqrs events and commands",
+  "version": "1.0.18",
+  "description": "a toolkit for managing cqrs events and commands",
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
@@ -9,9 +9,22 @@
     "build": "rimraf dist && tsc",
     "prepublish": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amirofy2002/cqrs-flow.git"
+  },
+  "keywords": [
+    "cqrs",
+    "commands",
+    "events",
+    "toolkit"
+  ],
+  "author": "Amir Mehrabi Jorshari",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/amirofy2002/cqrs-flow/issues"
+  },
+  "homepage": "https://github.com/amirofy2002/cqrs-flow#readme",
   "devDependencies": {
     "@types/node": "^20.6.0",
     "rimraf": "^5.0.1",
