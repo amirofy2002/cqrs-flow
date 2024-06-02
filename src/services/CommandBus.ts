@@ -26,18 +26,35 @@ export class CommandBus {
     const onSuccess = new Subject();
     const p = new Promise((resolve, reject) => {
       onSuccess.subscribe((x) => resolve(x));
-      onError.subscribe((x) => reject(new InvocationException(x)));
+      onError.subscribe((x) => {
+        InternalBus.subject.next(
+          new CommandFinishedExecutionWithErrorEvent(
+            name,
+            command,
+            new InvocationException(x),
+            Date.now()
+          )
+        );
+        return reject(new InvocationException(x));
+      });
     });
-    InternalBus.subject.next(new CommandStartedExecutionEvent(name, command));
+    InternalBus.subject.next(
+      new CommandStartedExecutionEvent(name, command, Date.now())
+    );
     // $executionContext.next(p)
     CommandBus.$commands.next({ name, command, onError, onSuccess });
     p.then((res) => {
       InternalBus.subject.next(
-        new CommandFinishedExecutionEvent(name, command, res)
+        new CommandFinishedExecutionEvent(name, command, res, Date.now())
       );
     }).catch((err) => {
       InternalBus.subject.next(
-        new CommandFinishedExecutionWithErrorEvent(name, command, err)
+        new CommandFinishedExecutionWithErrorEvent(
+          name,
+          command,
+          err,
+          Date.now()
+        )
       );
     });
     return p;
