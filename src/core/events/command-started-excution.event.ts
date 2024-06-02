@@ -2,6 +2,7 @@ import { ICommand } from "../types";
 import { ISystemEvent } from "../types/ISystemEvent";
 export class CommandStartedExecutionEvent implements ISystemEvent {
   constructor(
+    public readonly executionId: string,
     public readonly name: string,
     public readonly command: ICommand,
     public readonly timestamp: number
@@ -10,6 +11,7 @@ export class CommandStartedExecutionEvent implements ISystemEvent {
 
 export class CommandFinishedExecutionEvent implements ISystemEvent {
   constructor(
+    public readonly executionId: string,
     public readonly name: string,
     public readonly command: ICommand,
     public readonly result: any,
@@ -19,6 +21,7 @@ export class CommandFinishedExecutionEvent implements ISystemEvent {
 
 export class CommandFinishedExecutionWithErrorEvent implements ISystemEvent {
   constructor(
+    public readonly executionId: string,
     public readonly name: string,
     public readonly command: ICommand,
     public readonly error: Error,
