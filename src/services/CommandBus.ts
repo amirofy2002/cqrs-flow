@@ -28,16 +28,23 @@ export class CommandBus {
       onSuccess.subscribe((x) => resolve(x));
       onError.subscribe((x) => reject(new InvocationException(x)));
     });
-    InternalBus.subject.next(new CommandStartedExecutionEvent(name, command));
+    InternalBus.subject.next(
+      new CommandStartedExecutionEvent(name, command, Date.now())
+    );
     // $executionContext.next(p)
     CommandBus.$commands.next({ name, command, onError, onSuccess });
     p.then((res) => {
       InternalBus.subject.next(
-        new CommandFinishedExecutionEvent(name, command, res)
+        new CommandFinishedExecutionEvent(name, command, res, Date.now())
       );
     }).catch((err) => {
       InternalBus.subject.next(
-        new CommandFinishedExecutionWithErrorEvent(name, command, err)
+        new CommandFinishedExecutionWithErrorEvent(
+          name,
+          command,
+          err,
+          Date.now()
+        )
       );
     });
     return p;

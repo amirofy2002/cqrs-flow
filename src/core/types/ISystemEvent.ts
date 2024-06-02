@@ -1,1 +1,3 @@
-export interface ISystemEvent {}
+export interface ISystemEvent {
+  timestamp: number;
+}
