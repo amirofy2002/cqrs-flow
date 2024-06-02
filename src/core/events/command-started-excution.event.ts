@@ -1,6 +1,5 @@
-import { ICommand, IEvent } from "../types";
+import { ICommand } from "../types";
 import { ISystemEvent } from "../types/ISystemEvent";
-
 export class CommandStartedExecutionEvent implements ISystemEvent {
   constructor(
     public readonly name: string,
