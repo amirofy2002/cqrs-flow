@@ -3,6 +3,13 @@ import { ICommand, ICommandHandler } from "../core/types";
 import { Logger } from "./logger/logger";
 import { EventBus } from "./EventBus";
 import { ExecutionFailedEvent } from "../core/events/execution-failed.event";
+import { InvocationException } from "../core/exceptions/InvocationException";
+import { InternalBus } from "./InternalBus";
+import {
+  CommandFinishedExecutionEvent,
+  CommandFinishedExecutionWithErrorEvent,
+  CommandStartedExecutionEvent,
+} from "../core/events/command-started-excution.event";
 
 export class CommandBus {
   logger = new Logger(CommandBus.name);
@@ -19,11 +26,20 @@ export class CommandBus {
     const onSuccess = new Subject();
     const p = new Promise((resolve, reject) => {
       onSuccess.subscribe((x) => resolve(x));
-      onError.subscribe((x) => reject(x));
+      onError.subscribe((x) => reject(new InvocationException(x)));
     });
+    InternalBus.subject.next(new CommandStartedExecutionEvent(name, command));
     // $executionContext.next(p)
     CommandBus.$commands.next({ name, command, onError, onSuccess });
-
+    p.then((res) => {
+      InternalBus.subject.next(
+        new CommandFinishedExecutionEvent(name, command, res)
+      );
+    }).catch((err) => {
+      InternalBus.subject.next(
+        new CommandFinishedExecutionWithErrorEvent(name, command, err)
+      );
+    });
     return p;
   }
 
