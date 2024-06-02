@@ -1,6 +1,16 @@
 import { EventBus, CommandBus } from "./services";
-import { CommandHandler, EventHandler } from "./services/decorators";
-import { ICommand, ICommandHandler, IEvent, IEventHandler } from "./core/types";
+import {
+  CommandHandler,
+  EventHandler,
+  AllEventsReceiver,
+} from "./services/decorators";
+import {
+  ICommand,
+  ICommandHandler,
+  IEvent,
+  IEventHandler,
+  ISystemEvent,
+} from "./core/types";
 import { ExecutionFailedEvent } from "./core/events/execution-failed.event";
 
 export {
@@ -8,6 +18,7 @@ export {
   CommandBus,
   CommandHandler,
   EventHandler,
+  AllEventsReceiver,
   ExecutionFailedEvent,
 };
-export { ICommand, ICommandHandler, IEvent, IEventHandler };
+export { ICommand, ICommandHandler, IEvent, IEventHandler, ISystemEvent };
