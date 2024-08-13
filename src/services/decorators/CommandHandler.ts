@@ -34,7 +34,7 @@ export function CommandHandler(command: ICommand, options?: handleError) {
                     )
                   );
                 } else {
-                  xCommand.onError.next(err.message);
+                  xCommand.onError.next(err);
                 }
               });
           },
