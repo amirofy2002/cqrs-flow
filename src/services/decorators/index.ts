@@ -1,6 +1,7 @@
 import { CommandHandler } from "./v1/CommandHandler";
 import { CommandHandlerV2 } from "./v2/CommandHandlerV2";
 import { EventHandlerV2 } from "./v2/EventHandlerV2";
+import { QueryHandlerV2 } from "./v2/QueryHandlerV2";
 import { EventHandler } from "./v1/EventHandler";
 import { AllEventsReceiver } from "./v1/AllEventsReceiver";
 
@@ -10,4 +11,5 @@ export {
   AllEventsReceiver,
   CommandHandlerV2,
   EventHandlerV2,
+  QueryHandlerV2,
 };

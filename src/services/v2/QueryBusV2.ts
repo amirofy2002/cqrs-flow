@@ -9,33 +9,36 @@ import { IQueryHandler } from "../../core/types/IQueryHandler";
 import { IQuery } from "../../core/types/IQuery";
 
 export class QueryBusV2<T extends { new (...args: any[]): IQuery }> {
-  private bus = new Subject<T>();
+  private bus = new Subject<{ query: T; resolve: (result: any) => any }>();
   private static handlerCache = new Map<string, IQueryHandler<any>>();
 
   constructor() {
     this.init();
   }
   init() {
-    console.log("initialized query bus...");
-    this.bus.subscribe((ev: T) => {
-      const commandName = ev.constructor.name;
-      const handlerInstance = QueryBusV2.handlerCache.get(commandName);
+    console.debug("initialized query bus...");
+    this.bus.subscribe(async ({ query, resolve }) => {
+      const queryName = query.constructor.name;
+      const handlerInstance = QueryBusV2.handlerCache.get(queryName);
       if (!handlerInstance) {
-        console.error("no handler defined for this query ", commandName);
+        console.error("no handler defined for this query ", queryName);
         return;
       }
-      console.log("executing...");
+      console.debug("executing...");
 
-      handlerInstance.run(ev);
+      const result = await handlerInstance.run(query);
+      resolve(result);
     });
   }
 
-  handle(cmd: T): void {
-    if (!cmd) {
-      console.error("Invalid query: must implement IQuery. Received:", cmd);
-      return;
+  handle<K>(query: T): Promise<K> {
+    if (!query) {
+      console.error("Invalid query: must implement IQuery. Received:", query);
+      return Promise.reject("invalid query");
     }
-    this.bus.next(cmd);
+    return new Promise<K>((resolve) => {
+      this.bus.next({ query: query, resolve });
+    });
   }
 
   public static register<T>(query: string, handler: IQueryHandler<T>): void {
