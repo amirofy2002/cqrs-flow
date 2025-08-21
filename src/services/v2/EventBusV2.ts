@@ -1,9 +1,9 @@
 import { Subject } from "rxjs";
 import { IEvent, IEventHandler } from "../../core/types";
 
-export class EventBusV2<T extends { new (...args: any[]): IEvent }> {
-  private bus = new Subject<{ event: T; resolve: (result: any) => any }>();
-  private static handlerCache = new Map<string, IEventHandler<any>>();
+export class EventBusV2 {
+  private bus = new Subject<{ event: IEvent; resolve: (result: any) => any }>();
+  private static handlerCache = new Map<string, IEventHandler<IEvent>>();
 
   constructor() {
     this.init();
@@ -24,7 +24,7 @@ export class EventBusV2<T extends { new (...args: any[]): IEvent }> {
     });
   }
 
-  handle<K>(event: T): Promise<K> {
+  handle<K>(event: IEvent): Promise<K> {
     if (!event) {
       console.error("Invalid event: must implement IEvent. Received:", event);
       return Promise.reject("invalid event");
@@ -34,7 +34,7 @@ export class EventBusV2<T extends { new (...args: any[]): IEvent }> {
     });
   }
 
-  public static register<T>(event: string, handler: IEventHandler<T>): void {
+  public static register(event: string, handler: IEventHandler<IEvent>): void {
     if (!handler || typeof handler.handle !== "function") {
       console.error("Invalid handler: must implement handle method.");
       return;
