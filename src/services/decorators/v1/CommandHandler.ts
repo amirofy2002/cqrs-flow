@@ -1,9 +1,9 @@
 import { catchError, from, of, tap, EMPTY } from "rxjs";
-import { Logger } from "../logger/logger";
-import { ICommand, ICommandHandler } from "../../core/types";
-import { CommandBus } from "../CommandBus";
-import { EventBus } from "../EventBus";
-import { ExecutionFailedEvent } from "../../core/events/execution-failed.event";
+import { Logger } from "../../logger/logger";
+import { ICommand, ICommandHandler } from "../../../core/types";
+import { CommandBus } from "../../v1/CommandBus";
+import { EventBus } from "../../v1/EventBus";
+import { ExecutionFailedEvent } from "../../../core/events/execution-failed.event";
 type handleError = {
   handleError?: boolean;
 };

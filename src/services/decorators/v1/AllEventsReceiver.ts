@@ -1,6 +1,6 @@
-import { IEventHandler } from "../../core/types";
-import { ISystemEvent } from "../../core/types/ISystemEvent";
-import { InternalBus } from "../InternalBus";
+import { IEventHandler } from "../../../core/types";
+import { ISystemEvent } from "../../../core/types/ISystemEvent";
+import { InternalBus } from "../../InternalBus";
 
 export function AllEventsReceiver() {
   return function <
