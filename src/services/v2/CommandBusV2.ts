@@ -1,9 +1,12 @@
 import { Subject, filter } from "rxjs";
 import { ICommand, ICommandHandler } from "../../core/types";
 
-export class CommandBusV2<T extends { new (...args: any[]): ICommand }> {
-  private bus = new Subject<{ command: T; resolve: (result: any) => any }>();
-  private static handlerCache = new Map<string, ICommandHandler<any>>();
+export class CommandBusV2 {
+  private bus = new Subject<{
+    command: ICommand;
+    resolve: (result: any) => void;
+  }>();
+  private static handlerCache = new Map<string, ICommandHandler<ICommand>>();
 
   constructor() {
     this.init();
@@ -24,7 +27,7 @@ export class CommandBusV2<T extends { new (...args: any[]): ICommand }> {
     });
   }
 
-  execute<K>(cmd: T): Promise<K> {
+  execute<K>(cmd: ICommand): Promise<K> {
     if (!cmd) {
       console.error("Invalid command: must implement ICommand. Received:", cmd);
       return Promise.reject("invalid command");
@@ -34,9 +37,9 @@ export class CommandBusV2<T extends { new (...args: any[]): ICommand }> {
     });
   }
 
-  public static register<T>(
+  public static register<T, K>(
     command: string,
-    handler: ICommandHandler<T>
+    handler: ICommandHandler<ICommand>
   ): void {
     if (!handler || typeof handler.execute !== "function") {
       console.error("Invalid handler: must implement execute method.");
