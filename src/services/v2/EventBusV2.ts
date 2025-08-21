@@ -9,7 +9,7 @@ export class EventBusV2<T extends { new (...args: any[]): IEvent }> {
     this.init();
   }
   init() {
-    console.log("initialized command bus...");
+    console.log("initialized event bus...");
     this.bus.subscribe(async ({ event, resolve }) => {
       const commandName = event.constructor.name;
       const handlerInstance = EventBusV2.handlerCache.get(commandName);

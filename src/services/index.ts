@@ -1,3 +1,4 @@
+import { ICommand } from "../core/types";
 import { CommandBus } from "./v1/CommandBus";
 import { EventBus } from "./v1/EventBus";
 import { CommandBusV2 } from "./v2/CommandBusV2";
