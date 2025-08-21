@@ -8,9 +8,9 @@ import {
 import { IQueryHandler } from "../../core/types/IQueryHandler";
 import { IQuery } from "../../core/types/IQuery";
 
-export class QueryBusV2<T extends { new (...args: any[]): IQuery }> {
-  private bus = new Subject<{ query: T; resolve: (result: any) => any }>();
-  private static handlerCache = new Map<string, IQueryHandler<any>>();
+export class QueryBusV2 {
+  private bus = new Subject<{ query: IQuery; resolve: (result: any) => any }>();
+  private static handlerCache = new Map<string, IQueryHandler<IQuery>>();
 
   constructor() {
     this.init();
@@ -31,7 +31,7 @@ export class QueryBusV2<T extends { new (...args: any[]): IQuery }> {
     });
   }
 
-  handle<K>(query: T): Promise<K> {
+  run<K>(query: IQuery): Promise<K> {
     if (!query) {
       console.error("Invalid query: must implement IQuery. Received:", query);
       return Promise.reject("invalid query");
@@ -41,7 +41,7 @@ export class QueryBusV2<T extends { new (...args: any[]): IQuery }> {
     });
   }
 
-  public static register<T>(query: string, handler: IQueryHandler<T>): void {
+  public static register(query: string, handler: IQueryHandler<IQuery>): void {
     if (!handler || typeof handler.run !== "function") {
       console.error("Invalid handler: must implement run method.");
       return;
