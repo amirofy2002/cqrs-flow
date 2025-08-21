@@ -1,6 +1,6 @@
 import { Observable, Subject } from "rxjs";
 import { CommandBus } from "./CommandBus";
-import { ICommand, IEvent } from "../core/types";
+import { ICommand, IEvent } from "../../core/types";
 
 export class EventBus {
   static subject = new Subject<IEvent>();

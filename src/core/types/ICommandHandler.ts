@@ -1,3 +1,3 @@
-export interface ICommandHandler<ICommand> {
-  execute(command: ICommand): Promise<any>
+export interface ICommandHandler<T> {
+  execute(command: T): Promise<any>;
 }
