@@ -17,7 +17,6 @@ export class EventBusV2 {
         console.error("no handler defined for this event ", commandName);
         return;
       }
-      console.log("executing...");
 
       const result = await handlerInstance.handle(event);
       return resolve(result);

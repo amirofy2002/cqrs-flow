@@ -24,7 +24,6 @@ export class QueryBusV2 {
         console.error("no handler defined for this query ", queryName);
         return;
       }
-      console.debug("executing...");
 
       const result = await handlerInstance.run(query);
       resolve(result);
