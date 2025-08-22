@@ -20,8 +20,6 @@ export class CommandBusV2 {
         console.error("no handler defined for this command ", commandName);
         return;
       }
-      console.debug("executing...");
-
       const result = await handlerInstance.execute(command);
       resolve(result);
     });
