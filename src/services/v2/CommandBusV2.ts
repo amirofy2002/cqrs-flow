@@ -5,6 +5,7 @@ export class CommandBusV2 {
   private bus = new Subject<{
     command: ICommand;
     resolve: (result: any) => void;
+    reject: (err: string) => void;
   }>();
   private static handlerCache = new Map<string, ICommandHandler<ICommand>>();
 
@@ -13,15 +14,15 @@ export class CommandBusV2 {
   }
   init() {
     console.debug("initialized command bus...");
-    this.bus.subscribe(async ({ command, resolve }) => {
+    this.bus.subscribe(({ command, resolve, reject }) => {
       const commandName = command.constructor.name;
       const handlerInstance = CommandBusV2.handlerCache.get(commandName);
       if (!handlerInstance) {
         console.error("no handler defined for this command ", commandName);
+        reject(`no command handler found for this command: ${commandName}`);
         return;
       }
-      const result = await handlerInstance.execute(command);
-      resolve(result);
+      handlerInstance.execute(command).catch(reject).then(resolve);
     });
   }
 
@@ -30,8 +31,8 @@ export class CommandBusV2 {
       console.error("Invalid command: must implement ICommand. Received:", cmd);
       return Promise.reject("invalid command");
     }
-    return new Promise<K>((resolve) => {
-      this.bus.next({ command: cmd, resolve });
+    return new Promise<K>((resolve, reject) => {
+      this.bus.next({ command: cmd, resolve, reject });
     });
   }
 
@@ -40,10 +41,10 @@ export class CommandBusV2 {
     handler: ICommandHandler<ICommand>
   ): void {
     if (!handler || typeof handler.execute !== "function") {
-      console.error("Invalid handler: must implement execute method.");
+      console.error("Invalid command handler: must implement execute method.");
       return;
     }
     CommandBusV2.handlerCache.set(command, handler);
-    console.debug(`Handler registered for command: [${command}]`);
+    console.debug(`Command Handler registered for command: [${command}]`);
   }
 }
