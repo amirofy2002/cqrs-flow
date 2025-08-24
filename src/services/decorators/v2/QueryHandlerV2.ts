@@ -7,7 +7,10 @@ export const QueryHandlerV2 = (query: { new (...args: any[]): IQuery }) => {
     constructor: T
   ) {
     return class extends constructor {
-      queryBus = QueryBusV2.register(new query().constructor.name, this as any);
+      _____queryBus____ = QueryBusV2.register(
+        new query().constructor.name,
+        this as any
+      );
     };
   };
 };

@@ -6,7 +6,10 @@ export const EventHandlerV2 = (event: { new (...args: any[]): IEvent }) => {
     constructor: T
   ) {
     return class extends constructor {
-      eventBus = EventBusV2.register(new event().constructor.name, this as any);
+      _____eventBus_____ = EventBusV2.register(
+        new event().constructor.name,
+        this as any
+      );
     };
   };
 };

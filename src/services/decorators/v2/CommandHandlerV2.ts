@@ -8,7 +8,7 @@ export const CommandHandlerV2 = (command: {
     T extends { new (...args: any[]): ICommandHandler<ICommand> }
   >(constructor: T) {
     return class extends constructor {
-      commandBus = CommandBusV2.register(
+      _____commandBus_____ = CommandBusV2.register(
         new command().constructor.name,
         this as any
       );
