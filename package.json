@@ -1,11 +1,11 @@
 {
   "name": "cqrs-flow",
-  "version": "1.0.34",
+  "version": "1.1.0",
   "description": "a toolkit for managing cqrs events and commands",
   "main": "dist/index",
   "types": "dist/index",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run build && node --test test/*.test.js",
     "build": "rimraf dist && tsc",
     "prepublish": "npm run build",
     "dev": "nodemon src/test.ts",
