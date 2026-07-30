@@ -7,7 +7,7 @@ export class EventBusV2 {
     resolve: (result: any) => any;
     reject: (err: string) => void;
   }>();
-  private static handlerCache = new Map<string, IEventHandler<IEvent>>();
+  private static handlerCache = new Map<string, IEventHandler<IEvent>[]>();
 
   constructor() {
     this.init();
@@ -16,24 +16,30 @@ export class EventBusV2 {
     console.log("initializing event bus...");
     this.bus.subscribe(({ event, resolve, reject }) => {
       const eventName = event.constructor.name;
-      const handlerInstance = EventBusV2.handlerCache.get(eventName);
-      if (!handlerInstance) {
+      const handlerInstances = EventBusV2.handlerCache.get(eventName);
+      if (!handlerInstances?.length) {
         console.error("no handler defined for this event ", eventName);
         reject(`no event handler found for this event: ${eventName}`);
         return;
       }
 
-      handlerInstance.handle(event).catch(reject).then(resolve);
+      Promise.all(
+        handlerInstances.map((handlerInstance) =>
+          handlerInstance.handle(event)
+        )
+      )
+        .then(resolve)
+        .catch(reject);
     });
     console.log("initialized event bus.");
   }
 
-  handle<K>(event: IEvent): Promise<K> {
+  handle<K>(event: IEvent): Promise<K[]> {
     if (!event) {
       console.error("Invalid event: must implement IEvent. Received:", event);
       return Promise.reject("invalid event");
     }
-    return new Promise<K>((resolve, reject) => {
+    return new Promise<K[]>((resolve, reject) => {
       this.bus.next({ event: event, resolve, reject });
     });
   }
@@ -44,7 +50,13 @@ export class EventBusV2 {
       return;
     }
 
-    EventBusV2.handlerCache.set(event, handler);
+    const handlers = EventBusV2.handlerCache.get(event) ?? [];
+    if (handlers.includes(handler)) {
+      return;
+    }
+
+    handlers.push(handler);
+    EventBusV2.handlerCache.set(event, handlers);
     console.log(`Event Handler registered for event: [${event}]`);
   }
 }
